@@ -6,7 +6,9 @@ const billingRoutes = require('./routes/billingRoutes');
 const sequelize = require('./config/database');
 const providerRoutes = require('./routes/providerRoutes');
 const notificationRoutes = require('./routes/notificationRoutes')
-const { swaggerUi, specs } = require('./swagger'); // Import Swagger
+const swaggerUi = require('swagger-ui-express');
+const fs = require('fs');
+const path = require('path');
 
 // Initialize Express
 const app = express();
@@ -14,12 +16,16 @@ app.use(cors());
 app.use(bodyParser.json());
 
 
+// Swagger UI
+const swaggerFilePath = path.join(__dirname, 'swagger', 'swagger.json');
+const swaggerDocument = JSON.parse(fs.readFileSync(swaggerFilePath, 'utf-8'));
+
 // Billing API Routes
 app.use('/api', billingRoutes);
 app.use('/api', providerRoutes);
 app.use('/api', notificationRoutes);
-// Swagger UI
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
 

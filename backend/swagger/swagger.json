@@ -1,0 +1,226 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Provider Notification API",
+      "version": "1.0.0",
+      "description": "API for managing provider billing, notifications, and system alerts."
+    },
+    "servers": [
+      {
+        "url": "http://localhost:5000/api",
+        "description": "Local development server"
+      }
+    ],
+    "tags": [
+      { "name": "Billing", "description": "Endpoints related to provider billing" },
+      { "name": "Notifications", "description": "Endpoints for managing notifications and alerts" }
+    ],
+    "paths": {
+      "/billing": {
+        "post": {
+          "summary": "Create a new billing record",
+          "tags": ["Billing"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "provider_id": { "type": "string", "format": "uuid" },
+                    "consultation_id": { "type": "string", "format": "uuid" },
+                    "duration_minutes": { "type": "integer" },
+                    "billing_amount": { "type": "number", "format": "float" },
+                    "date_range": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": { "description": "Billing record created successfully" },
+            "500": { "description": "Server error" }
+          }
+        },
+        "get": {
+          "summary": "Get all billing records",
+          "tags": ["Billing"],
+          "responses": {
+            "200": { "description": "Returns all billing records" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/billing/{provider_id}": {
+        "get": {
+          "summary": "Get billing records by provider ID",
+          "tags": ["Billing"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "provider_id",
+              "required": true,
+              "schema": { "type": "string", "format": "uuid" }
+            }
+          ],
+          "responses": {
+            "200": { "description": "Returns billing records for the provider" },
+            "404": { "description": "Provider not found" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/billing/{id}": {
+        "put": {
+          "summary": "Update a billing record",
+          "tags": ["Billing"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "schema": { "type": "string", "format": "uuid" }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "duration_minutes": { "type": "integer" },
+                    "billing_amount": { "type": "number" },
+                    "date_range": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": { "description": "Billing record updated successfully" },
+            "404": { "description": "Billing record not found" },
+            "500": { "description": "Server error" }
+          }
+        },
+        "delete": {
+          "summary": "Delete a billing record",
+          "tags": ["Billing"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "schema": { "type": "string", "format": "uuid" }
+            }
+          ],
+          "responses": {
+            "200": { "description": "Billing record deleted" },
+            "404": { "description": "Billing record not found" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/notifications": {
+        "get": {
+          "summary": "Get all notifications",
+          "tags": ["Notifications"],
+          "responses": {
+            "200": { "description": "List of notifications" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/notifications/{id}": {
+        "get": {
+          "summary": "Get a specific notification by ID",
+          "tags": ["Notifications"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "schema": { "type": "string", "format": "uuid" }
+            }
+          ],
+          "responses": {
+            "200": { "description": "Notification details" },
+            "404": { "description": "Notification not found" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/notifications/{id}/mark-read": {
+        "put": {
+          "summary": "Mark a notification as read",
+          "tags": ["Notifications"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "schema": { "type": "string", "format": "uuid" }
+            }
+          ],
+          "responses": {
+            "200": { "description": "Notification marked as read" },
+            "404": { "description": "Notification not found" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/notifications/{id}/delete": {
+        "delete": {
+          "summary": "Delete a notification",
+          "tags": ["Notifications"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "schema": { "type": "string", "format": "uuid" }
+            }
+          ],
+          "responses": {
+            "200": { "description": "Notification deleted" },
+            "404": { "description": "Notification not found" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/notifications/system-downtime": {
+        "post": {
+          "summary": "Send a system downtime notification",
+          "tags": ["Notifications"],
+          "security": [{ "BearerAuth": [] }],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "Scheduled maintenance on March 20, 2025 from 2 AM to 5 AM." }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": { "description": "Notification sent successfully" },
+            "500": { "description": "Server error" }
+          }
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "BearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    }
+  }
+  
