@@ -15,10 +15,8 @@ const Notification = sequelize.define('Notification', {
             key: 'id'
         }
     },
-    type: { 
-        type: DataTypes.ENUM('billing', 'appointment', 'system', 'admin_message'), 
-        allowNull: false 
-    },
+    type: { type: DataTypes.ENUM('consultation', 'system', 'billing', 'license_expiry'), allowNull: false },
+
     message: { 
         type: DataTypes.TEXT, 
         allowNull: false 

@@ -7,6 +7,8 @@ const sequelize = require('./config/database');
 const providerRoutes = require('./routes/providerRoutes');
 const notificationRoutes = require('./routes/notificationRoutes')
 const swaggerUi = require('swagger-ui-express');
+const consultationRoutes = require("./routes/consultationRoutes");
+const licenseRoutes = require("./routes/licenseRoutes");
 const fs = require('fs');
 const path = require('path');
 
@@ -25,7 +27,17 @@ app.use('/api', billingRoutes);
 app.use('/api', providerRoutes);
 app.use('/api', notificationRoutes);
 
+
+
+// Routes
+app.use("/api/consultations", consultationRoutes);
+app.use("/api/license", licenseRoutes);
+
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+
+
 
 
 
